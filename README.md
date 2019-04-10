@@ -1,2 +1,2 @@
 # kursovaya
-neural networks pictures recognititon
+neural networks style transfer
