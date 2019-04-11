@@ -8,19 +8,19 @@ import os
 from keras.applications import vgg19
 from keras import backend as K
 
-#TODO добавить ввод парметров
-def run_style_transfer(base_image_path, style_reference_image_path):
+
+def run_style_transfer(base_image_path, style_reference_image_path, content_weight, style_weight, iterations, result_prefix):
 	# base_image_path = 'C:\\Users\\ivan\\PycharmProjects\\kursovaya\\data\\kirill.jpg'
 	# style_reference_image_path = args.style_reference_image_path
 	# style_reference_image_path = 'C:\\Users\\ivan\\PycharmProjects\\kursovaya\\data\\spagetti.jpeg'
 	# result_prefix = args.result_prefix
-	result_prefix = 'result'
-	iterations = 10
+	# result_prefix = 'result'
+	# iterations = 10
 
 	# these are the weights of the different loss components
 	total_variation_weight = 1.0
-	style_weight = 1.0
-	content_weight = 0.025
+	# style_weight = 1.0
+	# content_weight = 0.025
 
 	# dimensions of the generated picture.
 	width, height = load_img(base_image_path).size
