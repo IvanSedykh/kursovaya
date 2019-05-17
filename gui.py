@@ -3,9 +3,9 @@ from PyQt5.QtWidgets import (QMainWindow,
                              QFileDialog, QApplication, QPushButton, QLabel, QLineEdit, QProgressBar)
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
+import ker
 
-
-class Example(QMainWindow):
+class App(QMainWindow):
 
 	def __init__(self):
 		super().__init__()
@@ -29,7 +29,7 @@ class Example(QMainWindow):
 
 		# show content image
 		self.content_imageLabel = QLabel(self)
-		self.content_imageLabel.move(200, 400)
+		self.content_imageLabel.move(400, 200)
 
 		# input content weight
 		self.content_weightLine = QLineEdit(self)
@@ -106,7 +106,6 @@ class Example(QMainWindow):
 		тупа открывает проводник и сохрнаяет имена выбранных картинок
 		и отображает миниатюры
 		"""
-		# TODO миниатюра для стайл картинки
 		sender = self.sender()
 		fname = QFileDialog.getOpenFileName(self, 'Open file', 'C:/Users/ivan/PycharmProjects/kursovaya/data')[0]
 		if sender.text() == 'select content':
@@ -126,28 +125,33 @@ class Example(QMainWindow):
 			self.style_imageLabel.resize(150, 150)
 
 	def choosePath(self):
-		dirname = QFileDialog.getExistingDirectory(self, 'C:/Users/ivan/PycharmProjects/kursovaya/transfered_imgs')
+		"""
+		тупа открывает проводник для выбора директории результата
+		:return:
+		"""
+		dirname = QFileDialog.getExistingDirectory(self, 'C:/Users/ivan/PycharmProjects/kursovaya/transfered_imgs/trash')
 		self.prefixLabel.setText(dirname)
 		self.prefixLabel.resize(200, 20)
 
 	def run(self):
 		# TODO сделать try except
 		# todo progress-bar
-		if 'ker' not in sys.modules:
-			import ker
 
 		prefix = self.prefixLabel.text() + '/' + self.result_nameLine.text()
-		ker.run_style_transfer(
+		try:
+			ker.run_style_transfer(
 			self.contentLabel.text(),
 			self.styleLabel.text(),
 			float(self.content_weightLine.text()),
 			float(self.style_weightLine.text()),
 			int(self.iter_numLine.text()),
 			prefix
-		)
+			)
+		except FileNotFoundError:
+			print('ERROR, check paths')
 
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	ex = Example()
+	ex = App()
 	sys.exit(app.exec_())

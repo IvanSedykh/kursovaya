@@ -1,4 +1,3 @@
-# from __future__ import print_function
 from keras.preprocessing.image import load_img, save_img, img_to_array
 import numpy as np
 from scipy.optimize import fmin_l_bfgs_b
@@ -8,8 +7,7 @@ from keras.applications import vgg19
 from keras import backend as K
 
 
-def run_style_transfer(bar,
-                       base_image_path,
+def run_style_transfer(base_image_path,
                        style_reference_image_path,
                        content_weight,
                        style_weight,
