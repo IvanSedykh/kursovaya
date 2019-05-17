@@ -1,106 +1,153 @@
 import sys
-from PyQt5.QtWidgets import (QMainWindow, QTextEdit,
-    QAction, QFileDialog, QApplication, QPushButton, QLabel, QLineEdit)
-from PyQt5.QtGui import QIcon
-import ker
+from PyQt5.QtWidgets import (QMainWindow,
+                             QFileDialog, QApplication, QPushButton, QLabel, QLineEdit, QProgressBar)
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 
 
 class Example(QMainWindow):
 
-    def __init__(self):
-        super().__init__()
+	def __init__(self):
+		super().__init__()
 
-        self.initUI()
+		self.initUI()
 
-    def initUI(self):
-        # TODO отображение картинок и редизайн
-        contentBtn = QPushButton('select content', self)
-        contentBtn.clicked.connect(self.choosePicture)
-        contentBtn.setToolTip('Select content image')
-        contentBtn.resize(contentBtn.sizeHint())
-        contentBtn.move(50, 50)
+	def initUI(self):
+		# TODO редизайн
 
-        self.contentLabel = QLabel(self)
-        self.contentLabel.setText('//content path//')
-        self.contentLabel.move(50, 70)
+		# select content image
+		self.contentBtn = QPushButton('select content', self)
+		self.contentBtn.clicked.connect(self.choosePicture)
+		self.contentBtn.setToolTip('Select content image')
+		self.contentBtn.resize(self.contentBtn.sizeHint())
+		self.contentBtn.move(50, 50)
 
-        self.content_weightLine = QLineEdit(self)
-        self.content_weightLine.setText('1.0')
-        self.content_weightLine.setToolTip('content picture weight\n1.0 - 0.001 recommended')
-        self.content_weightLine.resize(60, 17)
-        self.content_weightLine.move(50, 95)
+		# show content imageself. name
+		self.contentLabel = QLabel(self)
+		self.contentLabel.setText('//content path//')
+		self.contentLabel.move(50, 70)
 
-        styleBtn = QPushButton('select style', self)
-        styleBtn.clicked.connect(self.choosePicture)
-        styleBtn.setToolTip('Select style image')
-        styleBtn.resize(styleBtn.sizeHint())
-        styleBtn.move(50, 150)
+		# show content image
+		self.content_imageLabel = QLabel(self)
+		self.content_imageLabel.move(200, 400)
 
-        self.styleLabel = QLabel(self)
-        self.styleLabel.setText('//style path//')
-        self.styleLabel.move(50, 170)
+		# input content weight
+		self.content_weightLine = QLineEdit(self)
+		self.content_weightLine.setText('1.0')
+		self.content_weightLine.setToolTip('content picture weight\n1.0 - 0.001 recommended')
+		self.content_weightLine.resize(60, 17)
+		self.content_weightLine.move(50, 95)
 
-        self.style_weightLine = QLineEdit(self)
-        self.style_weightLine.setText('1.0')
-        self.style_weightLine.setToolTip('style picture weight\n1.0 - 0.001 recommended')
-        self.style_weightLine.resize(60, 17)
-        self.style_weightLine.move(50, 195)
+		# show style image
+		self.style_imageLabel = QLabel(self)
+		self.style_imageLabel.move(400, 400)
 
-        self.prefixBtn = QPushButton('result directory', self)
-        self.prefixBtn.move(200, 150)
-        self.prefixBtn.clicked.connect(self.choosePath)
+		# select style image
+		self.styleBtn = QPushButton('select style', self)
+		self.styleBtn.clicked.connect(self.choosePicture)
+		self.styleBtn.setToolTip('Select style image')
+		self.styleBtn.resize(self.styleBtn.sizeHint())
+		self.styleBtn.move(50, 150)
 
-        self.prefixLabel = QLabel(self)
-        self.prefixLabel.setText('//saving path//')
-        self.prefixLabel.move(200, 175)
+		# show style image name
+		self.styleLabel = QLabel(self)
+		self.styleLabel.setText('//style path//')
+		self.styleLabel.move(50, 170)
 
+		# input style weight
+		self.style_weightLine = QLineEdit(self)
+		self.style_weightLine.setText('1.0')
+		self.style_weightLine.setToolTip('style picture weight\n1.0 - 0.001 recommended')
+		self.style_weightLine.resize(60, 17)
+		self.style_weightLine.move(50, 195)
 
+		# select the result directory
+		self.prefixBtn = QPushButton('result directory', self)
+		self.prefixBtn.setToolTip('directory to save result where')
+		self.prefixBtn.move(200, 150)
+		self.prefixBtn.clicked.connect(self.choosePath)
 
-        self.iter_numLine = QLineEdit(self)
-        self.iter_numLine.setText('10')
-        self.iter_numLine.setToolTip('number of iterations')
-        self.iter_numLine.resize(40, 17)
-        self.iter_numLine.move(50, 230)
+		# show the result directory
+		self.prefixLabel = QLabel(self)
+		self.prefixLabel.setText('//saving path//')
+		self.prefixLabel.move(200, 175)
 
-        runBTn = QPushButton('RUN', self)
-        runBTn.move(50, 250)
-        runBTn.clicked.connect(self.run)
+		# input result file name
+		self.result_nameLine = QLineEdit(self)
+		self.result_nameLine.setToolTip('result file name')
+		self.result_nameLine.setText('result')
+		self.result_nameLine.resize(100, 20)
+		self.result_nameLine.move(200, 200)
 
-        self.setGeometry(300, 300, 650, 400)
-        self.setWindowTitle('Style transfer')
-        self.show()
+		# input number of iterations
+		self.iter_numLine = QLineEdit(self)
+		self.iter_numLine.setText('10')
+		self.iter_numLine.setToolTip('number of iterations')
+		self.iter_numLine.resize(40, 17)
+		self.iter_numLine.move(50, 230)
 
+		# progress-bar
+		self.progressBar = QProgressBar(self, )
+		self.progressBar.resize(200, 30)
+		self.progressBar.move(50, 290)
 
-    def choosePicture(self):
+		# run button
+		self.runBTn = QPushButton('RUN', self)
+		self.runBTn.move(50, 250)
+		self.runBTn.clicked.connect(self.run)
 
-        sender = self.sender()
-        fname = QFileDialog.getOpenFileName(self, 'Open file', '/home')[0]
-        if sender.text() == 'select content':
-            self.contentLabel.setText(fname)
-            self.contentLabel.resize(self.contentLabel.sizeHint())
-        if sender.text() == 'select style':
-            self.styleLabel.setText(fname)
-            self.styleLabel.resize(self.styleLabel.sizeHint())
+		# window settings
+		self.setGeometry(300, 300, 650, 400)
+		self.setWindowTitle('Style transfer')
+		self.show()
 
-    def choosePath(self):
-        dirname = QFileDialog.getExistingDirectory(self, '/home')
-        self.prefixLabel.setText(dirname)
-        self.prefixLabel.resize(self.prefixLabel.sizeHint())
+	def choosePicture(self):
+		"""
+		тупа открывает проводник и сохрнаяет имена выбранных картинок
+		и отображает миниатюры
+		"""
+		# TODO миниатюра для стайл картинки
+		sender = self.sender()
+		fname = QFileDialog.getOpenFileName(self, 'Open file', 'C:/Users/ivan/PycharmProjects/kursovaya/data')[0]
+		if sender.text() == 'select content':
+			self.contentLabel.setText(fname)
+			self.contentLabel.resize(self.contentLabel.sizeHint())
 
-    def run(self):
-        # TODO сделать поле для ввода имени результата
-        prefix = self.prefixLabel.text() + '/result'
-        ker.run_style_transfer(self.contentLabel.text(),
-                               self.styleLabel.text(),
-                               float(self.content_weightLine.text()),
-                               float(self.style_weightLine.text()),
-                               int(self.iter_numLine.text()),
-                               prefix
-                               )
+			# честно хз как это работает но оно делает миниатюру
+			pixmap = QPixmap(fname)
+			self.content_imageLabel.setPixmap(pixmap.scaled(150, 150, Qt.KeepAspectRatio))
+			self.content_imageLabel.resize(150, 150)
+		if sender.text() == 'select style':
+			self.styleLabel.setText(fname)
+			self.styleLabel.resize(self.styleLabel.sizeHint())
+
+			pixmap = QPixmap(fname)
+			self.style_imageLabel.setPixmap(pixmap.scaled(150, 150, Qt.KeepAspectRatio))
+			self.style_imageLabel.resize(150, 150)
+
+	def choosePath(self):
+		dirname = QFileDialog.getExistingDirectory(self, 'C:/Users/ivan/PycharmProjects/kursovaya/transfered_imgs')
+		self.prefixLabel.setText(dirname)
+		self.prefixLabel.resize(200, 20)
+
+	def run(self):
+		# TODO сделать try except
+		# todo progress-bar
+		if 'ker' not in sys.modules:
+			import ker
+
+		prefix = self.prefixLabel.text() + '/' + self.result_nameLine.text()
+		ker.run_style_transfer(
+			self.contentLabel.text(),
+			self.styleLabel.text(),
+			float(self.content_weightLine.text()),
+			float(self.style_weightLine.text()),
+			int(self.iter_numLine.text()),
+			prefix
+		)
 
 
 if __name__ == '__main__':
-
-    app = QApplication(sys.argv)
-    ex = Example()
-    sys.exit(app.exec_())
+	app = QApplication(sys.argv)
+	ex = Example()
+	sys.exit(app.exec_())

@@ -1,21 +1,20 @@
-from __future__ import print_function
+# from __future__ import print_function
 from keras.preprocessing.image import load_img, save_img, img_to_array
 import numpy as np
 from scipy.optimize import fmin_l_bfgs_b
 import time
-import os
 
 from keras.applications import vgg19
 from keras import backend as K
 
 
-def run_style_transfer(base_image_path, style_reference_image_path, content_weight, style_weight, iterations, result_prefix):
-	# base_image_path = 'C:\\Users\\ivan\\PycharmProjects\\kursovaya\\data\\kirill.jpg'
-	# style_reference_image_path = args.style_reference_image_path
-	# style_reference_image_path = 'C:\\Users\\ivan\\PycharmProjects\\kursovaya\\data\\spagetti.jpeg'
-	# result_prefix = args.result_prefix
-	# result_prefix = 'result'
-	# iterations = 10
+def run_style_transfer(bar,
+                       base_image_path,
+                       style_reference_image_path,
+                       content_weight,
+                       style_weight,
+                       iterations,
+                       result_prefix):
 
 	# these are the weights of the different loss components
 	total_variation_weight = 1.0
@@ -24,12 +23,10 @@ def run_style_transfer(base_image_path, style_reference_image_path, content_weig
 
 	# dimensions of the generated picture.
 	width, height = load_img(base_image_path).size
-	img_nrows = 400
+	img_nrows = 100
 	img_ncols = int(width * img_nrows / height)
 
-
 	# util function to open, resize and format pictures into appropriate tensors
-
 
 	def preprocess_image(image_path):
 		img = load_img(image_path, target_size=(img_nrows, img_ncols))
@@ -38,9 +35,7 @@ def run_style_transfer(base_image_path, style_reference_image_path, content_weig
 		img = vgg19.preprocess_input(img)
 		return img
 
-
 	# util function to convert a tensor into a valid image
-
 
 	def deprocess_image(x):
 		if K.image_data_format() == 'channels_first':
@@ -56,7 +51,6 @@ def run_style_transfer(base_image_path, style_reference_image_path, content_weig
 		x = x[:, :, ::-1]
 		x = np.clip(x, 0, 255).astype('uint8')
 		return x
-
 
 	# get tensor representations of our images
 	base_image = K.variable(preprocess_image(base_image_path))
@@ -82,12 +76,10 @@ def run_style_transfer(base_image_path, style_reference_image_path, content_weig
 	# get the symbolic outputs of each "key" layer (we gave them unique names).
 	outputs_dict = dict([(layer.name, layer.output) for layer in model.layers])
 
-
 	# compute the neural style loss
 	# first we need to define 4 util functions
 
 	# the gram matrix of an image tensor (feature-wise outer product)
-
 
 	def gram_matrix(x):
 		assert K.ndim(x) == 3
@@ -98,13 +90,11 @@ def run_style_transfer(base_image_path, style_reference_image_path, content_weig
 		gram = K.dot(features, K.transpose(features))
 		return gram
 
-
 	# the "style loss" is designed to maintain
 	# the style of the reference image in the generated image.
 	# It is based on the gram matrices (which capture style) of
 	# feature maps from the style reference image
 	# and from the generated image
-
 
 	def style_loss(style, combination):
 		assert K.ndim(style) == 3
@@ -115,19 +105,15 @@ def run_style_transfer(base_image_path, style_reference_image_path, content_weig
 		size = img_nrows * img_ncols
 		return K.sum(K.square(S - C)) / (4.0 * (channels ** 2) * (size ** 2))
 
-
 	# an auxiliary loss function
 	# designed to maintain the "content" of the
 	# base image in the generated image
 
-
 	def content_loss(base, combination):
 		return K.sum(K.square(combination - base))
 
-
 	# the 3rd loss function, total variation loss,
 	# designed to keep the generated image locally coherent
-
 
 	def total_variation_loss(x):
 		assert K.ndim(x) == 4
@@ -142,7 +128,6 @@ def run_style_transfer(base_image_path, style_reference_image_path, content_weig
 			b = K.square(
 				x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, :img_nrows - 1, 1:, :])
 		return K.sum(K.pow(a + b, 1.25))
-
 
 	# combine these loss functions into a single scalar
 	loss = K.variable(0.0)
@@ -174,7 +159,6 @@ def run_style_transfer(base_image_path, style_reference_image_path, content_weig
 
 	f_outputs = K.function([combination_image], outputs)
 
-
 	def eval_loss_and_grads(x):
 		if K.image_data_format() == 'channels_first':
 			x = x.reshape((1, 3, img_nrows, img_ncols))
@@ -188,14 +172,12 @@ def run_style_transfer(base_image_path, style_reference_image_path, content_weig
 			grad_values = np.array(outs[1:]).flatten().astype('float64')
 		return loss_value, grad_values
 
-
 	# this Evaluator class makes it possible
 	# to compute loss and gradients in one pass
 	# while retrieving them via two separate functions,
 	# "loss" and "grads". This is done because scipy.optimize
 	# requires separate functions for loss and gradients,
 	# but computing them separately would be inefficient.
-
 
 	class Evaluator(object):
 
@@ -217,7 +199,6 @@ def run_style_transfer(base_image_path, style_reference_image_path, content_weig
 			self.grad_values = None
 			return grad_values
 
-
 	evaluator = Evaluator()
 
 	# run scipy-based optimization (L-BFGS) over the pixels of the generated image
@@ -237,3 +218,6 @@ def run_style_transfer(base_image_path, style_reference_image_path, content_weig
 		end_time = time.time()
 		print('Image saved as', fname)
 		print('Iteration %d completed in %ds' % (i, end_time - start_time))
+
+		bar.setValue((i + 1) / iterations)
+		print((i + 1) / iterations)
