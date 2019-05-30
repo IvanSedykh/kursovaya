@@ -216,6 +216,3 @@ def run_style_transfer(base_image_path,
 		end_time = time.time()
 		print('Image saved as', fname)
 		print('Iteration %d completed in %ds' % (i, end_time - start_time))
-
-		bar.setValue((i + 1) / iterations)
-		print((i + 1) / iterations)

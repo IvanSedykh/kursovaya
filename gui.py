@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import (QMainWindow,
                              QFileDialog, QApplication, QPushButton, QLabel, QLineEdit, QProgressBar)
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt
 import ker
 
@@ -22,7 +22,7 @@ class App(QMainWindow):
 		self.contentBtn.resize(self.contentBtn.sizeHint())
 		self.contentBtn.move(50, 50)
 
-		# show content imageself. name
+		# show content name
 		self.contentLabel = QLabel(self)
 		self.contentLabel.setText('//content path//')
 		self.contentLabel.move(50, 70)
@@ -86,10 +86,10 @@ class App(QMainWindow):
 		self.iter_numLine.resize(40, 17)
 		self.iter_numLine.move(50, 230)
 
-		# progress-bar
-		self.progressBar = QProgressBar(self, )
-		self.progressBar.resize(200, 30)
-		self.progressBar.move(50, 290)
+		# progress-bar vpizdu ego
+		# self.progressBar = QProgressBar(self, )
+		# self.progressBar.resize(200, 30)
+		# self.progressBar.move(50, 290)
 
 		# run button
 		self.runBTn = QPushButton('RUN', self)
@@ -97,8 +97,10 @@ class App(QMainWindow):
 		self.runBTn.clicked.connect(self.run)
 
 		# window settings
-		self.setGeometry(300, 300, 650, 400)
+		self.setGeometry(300, 300, 750, 500)
 		self.setWindowTitle('Style transfer')
+		icon_path = 'C:/Users/ivan/PycharmProjects/kursovaya/data/hotline.png'
+		self.setWindowIcon(QIcon(icon_path))
 		self.show()
 
 	def choosePicture(self):
@@ -127,7 +129,6 @@ class App(QMainWindow):
 	def choosePath(self):
 		"""
 		тупа открывает проводник для выбора директории результата
-		:return:
 		"""
 		dirname = QFileDialog.getExistingDirectory(self, 'C:/Users/ivan/PycharmProjects/kursovaya/transfered_imgs/trash')
 		self.prefixLabel.setText(dirname)
@@ -140,7 +141,7 @@ class App(QMainWindow):
 		prefix = self.prefixLabel.text() + '/' + self.result_nameLine.text()
 		try:
 			ker.run_style_transfer(
-			self.contentLabel.text(),
+		    self.contentLabel.text(),
 			self.styleLabel.text(),
 			float(self.content_weightLine.text()),
 			float(self.style_weightLine.text()),
