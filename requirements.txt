@@ -3,3 +3,4 @@ scipy
 keras
 tensorflow
 PyQt5
+scipy

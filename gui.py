@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QMainWindow,
                              QFileDialog, QApplication, QPushButton, QLabel, QLineEdit, QProgressBar)
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt
-import ker
+import transfer
 
 class App(QMainWindow):
 
@@ -140,7 +140,7 @@ class App(QMainWindow):
 
 		prefix = self.prefixLabel.text() + '/' + self.result_nameLine.text()
 		try:
-			ker.run_style_transfer(
+			transfer.run_style_transfer(
 		    self.contentLabel.text(),
 			self.styleLabel.text(),
 			float(self.content_weightLine.text()),

@@ -50,16 +50,18 @@
     <item row="3" column="1">
      <widget class="QLineEdit" name="style_weightLine">
       <property name="toolTip">
-       <string>style picture weight
-1.0 - 0.001 recommended</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;style picture weight&lt;/p&gt;&lt;p&gt;1 recommended&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="text">
-       <string>1.0</string>
+       <string>1</string>
       </property>
      </widget>
     </item>
     <item row="5" column="1">
      <widget class="QPushButton" name="runBTn">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;start the process&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
        <string>RUN</string>
       </property>
@@ -154,11 +156,10 @@
        <bool>true</bool>
       </property>
       <property name="toolTip">
-       <string>content picture weight
-1.0 - 0.001 recommended</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;content picture weight&lt;/p&gt;&lt;p&gt;1e-1 - 1e-4 recommended&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="text">
-       <string>1.0</string>
+       <string>0.05</string>
       </property>
      </widget>
     </item>
@@ -228,7 +229,7 @@
     <item row="1" column="2">
      <widget class="QLabel" name="label">
       <property name="frameShape">
-       <enum>QFrame::Box</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Plain</enum>
@@ -237,10 +238,20 @@
        <number>2</number>
       </property>
       <property name="text">
-       <string>//current result</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QLineEdit" name="maxLenghtLine">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;max linear size of result picture&lt;/p&gt;&lt;p&gt;400 recommended on GPU&lt;/p&gt;&lt;p&gt;bigger it is - longer it takes &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>200</string>
       </property>
      </widget>
     </item>

@@ -11,21 +11,21 @@ def run_style_transfer(base_image_path,
                        style_reference_image_path,
                        content_weight,
                        style_weight,
+                       maxlen,
                        iterations,
                        result_prefix):
 
-	# these are the weights of the different loss components
+	# weights for losses
 	total_variation_weight = 1.0
 	# style_weight = 1.0
 	# content_weight = 0.025
 
-	# dimensions of the generated picture.
+	# sizes of the result
 	width, height = load_img(base_image_path).size
-	img_nrows = 100
+	img_nrows = maxlen
 	img_ncols = int(width * img_nrows / height)
 
-	# util function to open, resize and format pictures into appropriate tensors
-
+	# prepare image for vgg19
 	def preprocess_image(image_path):
 		img = load_img(image_path, target_size=(img_nrows, img_ncols))
 		img = img_to_array(img)
@@ -33,15 +33,13 @@ def run_style_transfer(base_image_path,
 		img = vgg19.preprocess_input(img)
 		return img
 
-	# util function to convert a tensor into a valid image
-
+	# turn the result into normal picture
 	def deprocess_image(x):
 		if K.image_data_format() == 'channels_first':
 			x = x.reshape((3, img_nrows, img_ncols))
 			x = x.transpose((1, 2, 0))
 		else:
 			x = x.reshape((img_nrows, img_ncols, 3))
-		# Remove zero-center by mean pixel
 		x[:, :, 0] += 103.939
 		x[:, :, 1] += 116.779
 		x[:, :, 2] += 123.68
@@ -50,7 +48,7 @@ def run_style_transfer(base_image_path,
 		x = np.clip(x, 0, 255).astype('uint8')
 		return x
 
-	# get tensor representations of our images
+	# wrapping images in tensorflow variables
 	base_image = K.variable(preprocess_image(base_image_path))
 	style_reference_image = K.variable(preprocess_image(style_reference_image_path))
 

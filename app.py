@@ -1,10 +1,8 @@
 import sys
 from PyQt5 import QtWidgets
-# from PyQt5.QtWidgets import (QMainWindow,
-#                              QFileDialog, QApplication, QPushButton, QLabel, QLineEdit, QProgressBar)
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt
-import ker
+import transfer
 import design
 
 
@@ -52,18 +50,19 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
 		prefix = self.prefixLabel.text() + '/' + self.result_nameLine.text()
 		try:
-			ker.run_style_transfer(
+			transfer.run_style_transfer(
 				self.contentLabel.text(),
 				self.styleLabel.text(),
 				float(self.content_weightLine.text()),
 				float(self.style_weightLine.text()),
+				int(self.maxLenghtLine.text()),
 				int(self.iter_numLine.text()),
 				prefix
 			)
 		except FileNotFoundError:
 			print('ERROR, check paths')
 
-# TODO show intermediate pictures
+
 def main():
 	app = QtWidgets.QApplication(sys.argv)
 	window = App()
